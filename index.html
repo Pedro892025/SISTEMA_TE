@@ -140,7 +140,7 @@
                     </h3>
                     <p class="text-sm text-gray-600 mb-3">Escolha o ponto de medição → posição calculada automaticamente pela altura total</p>
 
-                    <div id="lista_medicoes_inicial" class="grid md:grid-cols-3 gap-3 mb-3">
+                    <div id="lista_medicoes_inicial" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
                         <!-- Campos vão aparecer aqui ao clicar em adicionar -->
                     </div>
 
@@ -149,20 +149,13 @@
                     </button>
 
                     <div id="analise_estratificacao_inicial" class="hidden"></div>
-                    <div class="result-box bg-secondary/10 border-secondary mt-3">
-                        <span class="font-medium">Temperatura Média Ponderada Calculada:</span> <span id="temp_media_inicial"></span> °C
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-4 mt-5">
-                    <div>
-                        <label class="label">Densidade a 20°C - Último Certificado (kg/L) <span class="text-red-500">*</span></label>
-                        <input type="number" step="0.0001" id="dens_inicial_20" class="input-field" placeholder="Ex: 0,7525" required>
-                        <p class="text-xs text-gray-500 mt-1">Valor do certificado anterior já cadastrado</p>
-                    </div>
-                    <div>
-                        <label class="label">Número do Certificado Anterior</label>
-                        <input type="text" id="cert_anterior" class="input-field" placeholder="Ex: LAB-2026-0412">
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div class="result-box bg-secondary/10 border-secondary">
+                            <span class="font-medium">Temperatura Média Ponderada:</span> <span id="temp_media_inicial"></span> °C
+                        </div>
+                        <div class="result-box bg-secondary/10 border-secondary">
+                            <span class="font-medium">Densidade Média Ponderada:</span> <span id="dens_media_inicial"></span> kg/L
+                        </div>
                     </div>
                 </div>
 
@@ -181,6 +174,9 @@
                 <div id="resultado_inicial" class="hidden mt-4 p-4 bg-light rounded border border-gray-200">
                     <h3 class="font-bold text-primary mb-2">Resultados do Tanque Inicial:</h3>
                     <div class="grid md:grid-cols-2 gap-2">
+                        <div class="result-box">
+                            <span class="font-medium">Densidade Corrigida a 20°C:</span> <span id="dens_inicial_calc"></span> kg/L
+                        </div>
                         <div class="result-box">
                             <span class="font-medium">Fator de Correção de Volume (FCV):</span> <span id="fcv_inicial"></span>
                         </div>
@@ -280,6 +276,14 @@
 
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
+                        <label class="label">Identificação do Tanque</label>
+                        <input type="text" id="tanque_id_rel" class="input-field" placeholder="Ex: Tanque 05 - Gasolina A">
+                    </div>
+                    <div>
+                        <label class="label">Número do Certificado / Lote</label>
+                        <input type="text" id="cert_geral" class="input-field" placeholder="Ex: LAB-2026-0412">
+                    </div>
+                    <div>
                         <label class="label">Data e Hora da Medição Final</label>
                         <input type="datetime-local" id="data_final" class="input-field">
                     </div>
@@ -296,11 +300,11 @@
                 <!-- SEÇÃO DE TEMPERATURAS POR ALTURA -->
                 <div class="mt-5 p-4 bg-gray-50 rounded border border-gray-200">
                     <h3 class="font-bold text-primary mb-3 flex items-center gap-2">
-                        <i class="fa fa-thermometer-half"></i> Medições de Temperatura
+                        <i class="fa fa-thermometer-half"></i> Medições de Temperatura e Densidade
                     </h3>
-                    <p class="text-sm text-gray-600 mb-3">Escolha o ponto de medição → posição calculada automaticamente pela altura total</p>
+                    <p class="text-sm text-gray-600 mb-3">Escolha o ponto de medição → posição calculada automaticamente pela altura total (1m abaixo do topo / 1m acima do fundo)</p>
 
-                    <div id="lista_medicoes_final" class="grid md:grid-cols-3 gap-3 mb-3">
+                    <div id="lista_medicoes_final" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
                         <!-- Campos vão aparecer aqui ao clicar em adicionar -->
                     </div>
 
@@ -309,13 +313,18 @@
                     </button>
 
                     <div id="analise_estratificacao_final" class="hidden"></div>
-                    <div class="result-box bg-secondary/10 border-secondary mt-3">
-                        <span class="font-medium">Temperatura Média Ponderada Calculada:</span> <span id="temp_media_final"></span> °C
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div class="result-box bg-secondary/10 border-secondary">
+                            <span class="font-medium">Temperatura Média Ponderada:</span> <span id="temp_media_final"></span> °C
+                        </div>
+                        <div class="result-box bg-secondary/10 border-secondary">
+                            <span class="font-medium">Densidade Média Ponderada:</span> <span id="dens_media_final"></span> kg/L
+                        </div>
                     </div>
 
                     <div class="md:col-span-2 mt-3">
                         <div class="bg-yellow-50 border border-yellow-200 p-3 rounded">
-                            <p class="text-sm text-yellow-800"><i class="fa fa-info-circle mr-1"></i> <strong>Atenção:</strong> A densidade da mistura será calculada automaticamente com base nas massas das duas cargas - não usar densidade antiga ou nova separadamente!</p>
+                            <p class="text-sm text-yellow-800"><i class="fa fa-info-circle mr-1"></i> <strong>Atenção:</strong> Os cálculos consideram a estratificação térmica e de densidade para maior precisão conforme NBR 14065.</p>
                         </div>
                     </div>
                 </div>
@@ -477,20 +486,31 @@
                     </select>
 
                     <div class="mt-2 posicao-livre" style="display: none;">
-                        <label class="label">Altura (metros)</label>
+                        <label class="label">Profundidade na Trena (metros)</label>
                         <input type="number" step="0.01" class="input-field valor-posicao" placeholder="Ex: 2,50" oninput="atualizarPosicao('${tipo}', ${id})">
                     </div>
 
-                    <label class="label mt-2">Temperatura (°C)</label>
-                    <input type="number" step="0.1" class="input-field valor-temp" placeholder="Ex: 30,5">
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <div>
+                            <label class="label">Temp. (°C)</label>
+                            <input type="number" step="0.1" class="input-field valor-temp" placeholder="Ex: 30,5">
+                        </div>
+                        <div>
+                            <label class="label">Dens. (kg/L)</label>
+                            <input type="number" step="0.0001" class="input-field valor-dens" placeholder="Ex: 0,7525">
+                        </div>
+                    </div>
 
                     <div class="mt-2 text-xs text-gray-600">
-                        Posição calculada: <span class="posicao-calculada font-medium">0,00 m</span>
+                        Leitura na Trena (Profundidade): <span class="posicao-calculada font-medium">0,00 m</span>
                     </div>
                 </div>
             `;
 
             container.insertAdjacentHTML('beforeend', html);
+            
+            // Forçar a atualização da posição imediatamente após adicionar
+            atualizarPosicao(tipo, id);
         }
 
         // Remover medição
@@ -498,7 +518,7 @@
             document.getElementById(`med_${tipo}_${id}`).remove();
         }
 
-        // Atualizar posição automaticamente
+        // Atualizar posição (Profundidade na Trena) automaticamente
         function atualizarPosicao(tipo, id) {
             const item = document.getElementById(`med_${tipo}_${id}`);
             const ponto = item.querySelector('.ponto-medicao').value;
@@ -508,13 +528,27 @@
 
             if (ponto === 'livre') {
                 divLivre.style.display = 'block';
-                const valorLivre = Number(item.querySelector('.valor-posicao').value) || 0;
-                posSpan.textContent = `${valorLivre.toLocaleString('pt-BR', {minimumFractionDigits:2})} m`;
+                const depthLivre = Number(item.querySelector('.valor-posicao').value) || 0;
+                posSpan.textContent = `${depthLivre.toLocaleString('pt-BR', {minimumFractionDigits:2})} m`;
             } else {
                 divLivre.style.display = 'none';
-                const porcentagem = Number(ponto);
-                const posicao = alturaTotal * porcentagem;
-                posSpan.textContent = `${posicao.toLocaleString('pt-BR', {minimumFractionDigits:2})} m`;
+                let depth = 0;
+                if (ponto === '0.00') {
+                    // Fundo: 1 metro acima da mesa = AlturaTotal - 1m de profundidade
+                    depth = Math.max(0, alturaTotal - 1.0);
+                } else if (ponto === '1.00') {
+                    // Topo: 1 metro abaixo da lâmina = 1m de profundidade
+                    depth = 1.0;
+                } else if (ponto === '0.50') {
+                    depth = alturaTotal * 0.5;
+                } else if (ponto === '0.25') {
+                    // 1/4 da altura (25% do fundo) = 75% de profundidade
+                    depth = alturaTotal * 0.75;
+                } else if (ponto === '0.75') {
+                    // 3/4 da altura (75% do fundo) = 25% de profundidade
+                    depth = alturaTotal * 0.25;
+                }
+                posSpan.textContent = `${depth.toLocaleString('pt-BR', {minimumFractionDigits:2})} m`;
             }
         }
 
@@ -527,98 +561,124 @@
             });
         }
 
-        // Pegar todas as medições e calcular média
+        // Pegar todas as medições e calcular médias (Convertendo Profundidade para Altura para o cálculo)
         function obterMedicoes(tipo) {
             const itens = document.querySelectorAll(`#lista_medicoes_${tipo} .medicao-item`);
             const alturaTotal = Number(document.getElementById(`altura_total_${tipo}`).value) || 0;
-            let posicoes = [];
+            let posicoes = []; // Estas serão ALTURAS (do fundo para o topo) para o cálculo
             let temperaturas = [];
+            let densidades = [];
 
             itens.forEach(item => {
                 const ponto = item.querySelector('.ponto-medicao').value;
-                let posicao = 0;
+                let depth = 0;
 
                 if (ponto === 'livre') {
-                    posicao = Number(item.querySelector('.valor-posicao').value) || 0;
-                } else {
-                    posicao = alturaTotal * Number(ponto);
+                    depth = Number(item.querySelector('.valor-posicao').value) || 0;
+                } else if (ponto === '0.00') {
+                    depth = Math.max(0, alturaTotal - 1.0);
+                } else if (ponto === '1.00') {
+                    depth = 1.0;
+                } else if (ponto === '0.50') {
+                    depth = alturaTotal * 0.5;
+                } else if (ponto === '0.25') {
+                    depth = alturaTotal * 0.75;
+                } else if (ponto === '0.75') {
+                    depth = alturaTotal * 0.25;
                 }
 
+                // Converter Profundidade (Trena) para Altura (do fundo)
+                let height = Math.max(0, alturaTotal - depth);
                 const temp = Number(item.querySelector('.valor-temp').value) || 0;
+                const dens = Number(item.querySelector('.valor-dens').value) || 0;
 
-                if (posicao >= 0 && posicao <= alturaTotal && temp > 0) {
-                    posicoes.push(posicao);
+                if (height >= 0 && height <= alturaTotal && temp > 0) {
+                    posicoes.push(height);
                     temperaturas.push(temp);
+                    densidades.push(dens);
                 }
             });
 
-            return { posicoes, temperaturas };
+            return { posicoes, temperaturas, densidades };
         }
 
         // ==============================================
         // CÁLCULOS DE ESTRATIFICAÇÃO E FCV
         // ==============================================
 
-        // Cálculo de temperatura média ponderada por altura
-        function calcularTemperaturaMedia(posicoes, temperaturas, alturaTotal) {
-            if(posicoes.length < 2) {
-                return temperaturas[0] || 0;
-            }
+        // Cálculo de média ponderada por altura (Temperatura ou Densidade)
+        function calcularMediaPonderada(posicoes, valores, alturaTotal) {
+            if(posicoes.length < 1) return 0;
+            if(posicoes.length === 1) return valores[0];
 
             // Ordenar por altura
             let pontos = [];
             for(let i=0; i<posicoes.length; i++) {
-                if(posicoes[i] > 0 && temperaturas[i] > 0) {
-                    pontos.push({pos: posicoes[i], temp: temperaturas[i]});
+                if(posicoes[i] >= 0) {
+                    pontos.push({pos: posicoes[i], val: valores[i]});
                 }
             }
             pontos.sort((a,b) => a.pos - b.pos);
 
-            if(pontos.length === 0) return 0;
-            if(pontos.length === 1) return pontos[0].temp;
-
-            // Adicionar ponto inicial (fundo) se não existir
+            // Adicionar ponto inicial (fundo) se não existir (usa o valor do primeiro ponto medido)
             if(pontos[0].pos > 0) {
-                pontos.unshift({pos: 0, temp: pontos[0].temp});
+                pontos.unshift({pos: 0, val: pontos[0].val});
             }
-            // Adicionar ponto final (topo) se não existir
+            // Adicionar ponto final (topo) se não existir (usa o valor do último ponto medido)
             if(pontos[pontos.length-1].pos < alturaTotal) {
-                pontos.push({pos: alturaTotal, temp: pontos[pontos.length-1].temp});
+                pontos.push({pos: alturaTotal, val: pontos[pontos.length-1].val});
             }
 
-            // Calcular média ponderada por faixa de altura
+            // Calcular média ponderada por faixa de altura (método trapezoidal)
             let somaPonderada = 0;
             for(let i=1; i<pontos.length; i++) {
                 let alturaFaixa = pontos[i].pos - pontos[i-1].pos;
-                let tempMediaFaixa = (pontos[i].temp + pontos[i-1].temp) / 2;
-                somaPonderada += alturaFaixa * tempMediaFaixa;
+                let valMedioFaixa = (pontos[i].val + pontos[i-1].val) / 2;
+                somaPonderada += alturaFaixa * valMedioFaixa;
             }
 
-            return Number((somaPonderada / alturaTotal).toFixed(1));
+            return somaPonderada / alturaTotal;
         }
 
-        // Analisar diferenças entre pontos e gerar aviso
-        function analisarEstratificacao(posicoes, temperaturas) {
+        // Função para corrigir densidade medida para 20°C (Baseado na NBR 14065)
+        function corrigirDensidadePara20(densMedida, tempMedida) {
+            let alpha;
+            if (densMedida >= 0.600 && densMedida < 0.750) alpha = 0.0012;
+            else if (densMedida >= 0.750 && densMedida < 0.850) alpha = 0.0009;
+            else if (densMedida >= 0.850 && densMedida < 0.950) alpha = 0.0007;
+            else alpha = 0.0006;
+
+            // dens20 = dens_t * (1 + alpha * (t - 20))
+            return densMedida * (1 + alpha * (tempMedida - 20));
+        }
+
+        // Analisar diferenças entre pontos e gerar aviso de estratificação
+        function analisarEstratificacao(posicoes, temperaturas, densidades) {
             let pontos = [];
             for(let i=0; i<posicoes.length; i++) {
-                if(posicoes[i] > 0 && temperaturas[i] > 0) {
-                    pontos.push({pos: posicoes[i], temp: temperaturas[i]});
-                }
+                pontos.push({pos: posicoes[i], temp: temperaturas[i], dens: densidades[i]});
             }
             pontos.sort((a,b) => a.pos - b.pos);
 
             if(pontos.length < 2) return {temEstratificacao: false, mensagem: ''};
 
-            let maiorDiferenca = 0;
+            let maiorDifTemp = 0;
+            let maiorDifDens = 0;
             for(let i=1; i<pontos.length; i++) {
-                let dif = Math.abs(pontos[i].temp - pontos[i-1].temp);
-                if(dif > maiorDiferenca) maiorDiferenca = dif;
+                let difT = Math.abs(pontos[i].temp - pontos[i-1].temp);
+                let difD = Math.abs(pontos[i].dens - pontos[i-1].dens);
+                if(difT > maiorDifTemp) maiorDifTemp = difT;
+                if(difD > maiorDifDens) maiorDifDens = difD;
             }
 
-            if(maiorDiferenca >= 2) {
+            let msgs = [];
+            if(maiorDifTemp >= 2) msgs.push(`Térmica: ${maiorDifTemp.toFixed(1)}°C`);
+            if(maiorDifDens >= 0.005) msgs.push(`Densidade: ${maiorDifDens.toFixed(4)} kg/L`);
+
+            if(msgs.length > 0) {
                 return {
                     temEstratificacao: true,
-                    mensagem: `Atenção: possível estratificação térmica identificada. Diferença de ${maiorDiferenca.toFixed(1)}°C entre pontos consecutivos. Avaliar representatividade da temperatura média.`
+                    mensagem: `⚠️ Estratificação detectada (${msgs.join(' | ')}). O sistema aplicou cálculo ponderado por altura para compensação.`
                 };
             }
 
@@ -646,22 +706,28 @@
         function calcularInicial() {
             const volBruto = Number(document.getElementById('vol_bruto_inicial').value);
             const alturaTotal = Number(document.getElementById('altura_total_inicial').value);
-            const dens20 = Number(document.getElementById('dens_inicial_20').value);
 
             // Pegar medições
-            const { posicoes, temperaturas } = obterMedicoes('inicial');
+            const { posicoes, temperaturas, densidades } = obterMedicoes('inicial');
 
-            if(!volBruto || !alturaTotal || !dens20 || temperaturas.length === 0) {
-                alert('Preencha todos os campos obrigatórios e adicione pelo menos uma medição de temperatura!');
+            if(!volBruto || !alturaTotal || temperaturas.length === 0) {
+                alert('Preencha todos os campos obrigatórios e adicione pelo menos uma medição (Temperatura e Densidade)!');
                 return;
             }
 
-            // Calcular média e analisar estratificação
-            const tempMedia = calcularTemperaturaMedia(posicoes, temperaturas, alturaTotal);
-            const analise = analisarEstratificacao(posicoes, temperaturas);
+            // Calcular médias ponderadas
+            const tempMedia = Number(calcularMediaPonderada(posicoes, temperaturas, alturaTotal).toFixed(1));
+            const densMediaT = calcularMediaPonderada(posicoes, densidades, alturaTotal);
+            
+            // Corrigir densidade média para 20°C
+            const densMedia20 = Number(corrigirDensidadePara20(densMediaT, tempMedia).toFixed(4));
 
-            // Exibir resultados da análise
+            const analise = analisarEstratificacao(posicoes, temperaturas, densidades);
+
+            // Exibir resultados das médias
             document.getElementById('temp_media_inicial').textContent = tempMedia.toLocaleString('pt-BR');
+            document.getElementById('dens_media_inicial').textContent = densMediaT.toLocaleString('pt-BR', {minimumFractionDigits:4});
+            
             const divAnalise = document.getElementById('analise_estratificacao_inicial');
             divAnalise.innerHTML = '';
             divAnalise.classList.add('hidden');
@@ -671,11 +737,12 @@
                 divAnalise.classList.remove('hidden');
             }
 
-            // Cálculos padrão (mantidos exatamente como eram)
-            const fcv = calcularFCV(dens20, tempMedia);
+            // Cálculos FCV e Volume
+            const fcv = calcularFCV(densMedia20, tempMedia);
             const vol20 = Number((volBruto * fcv).toFixed(3));
-            const massa = Number((vol20 * dens20 * 1000).toFixed(2)); // kg
+            const massa = Number((vol20 * densMedia20 * 1000).toFixed(2)); // kg
 
+            document.getElementById('dens_inicial_calc').textContent = densMedia20.toLocaleString('pt-BR', {minimumFractionDigits:4});
             document.getElementById('fcv_inicial').textContent = fcv;
             document.getElementById('vol_20_inicial').textContent = vol20.toLocaleString('pt-BR', {minimumFractionDigits:3, maximumFractionDigits:3});
             document.getElementById('massa_inicial').textContent = massa.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -696,7 +763,7 @@
                 return;
             }
 
-            // Cálculos padrão (mantidos exatamente como eram)
+            // Cálculos padrão
             const fcv = calcularFCV(dens20, temp);
             const vol20 = Number((volBruto * fcv).toFixed(3));
             const massa = Number((vol20 * dens20 * 1000).toFixed(2)); // kg
@@ -710,16 +777,16 @@
             document.getElementById('btn_concluir2').disabled = false;
         }
 
-        // CÁLCULO ABA 3 - FINAL (CORRIGIDO O ERRO DO NAN)
+        // CÁLCULO ABA 3 - FINAL
         function calcularFinal() {
             // VERIFICAR SE ETAPAS ANTERIORES ESTÃO CONCLUÍDAS
             if(!etapasConcluidas[1]) {
-                alert('⚠️ Primeiro conclua a ETAPA 1: Clique em "Calcular Valores" e depois em "Concluir Etapa" na aba 1!');
+                alert('⚠️ Primeiro conclua a ETAPA 1!');
                 proximaAba('tab1');
                 return;
             }
             if(!etapasConcluidas[2]) {
-                alert('⚠️ Primeiro conclua a ETAPA 2: Clique em "Calcular Valores" e depois em "Concluir Etapa" na aba 2!');
+                alert('⚠️ Primeiro conclua a ETAPA 2!');
                 proximaAba('tab2');
                 return;
             }
@@ -729,19 +796,26 @@
             const alturaTotal = Number(document.getElementById('altura_total_final').value);
 
             // Pegar medições
-            const { posicoes, temperaturas } = obterMedicoes('final');
+            const { posicoes, temperaturas, densidades } = obterMedicoes('final');
 
             if(!volBrutoFinal || !alturaTotal || temperaturas.length === 0) {
-                alert('Preencha todos os campos obrigatórios e adicione pelo menos uma medição de temperatura!');
+                alert('Preencha todos os campos obrigatórios e adicione pelo menos uma medição!');
                 return;
             }
 
-            // Calcular média e analisar estratificação
-            const tempMedia = calcularTemperaturaMedia(posicoes, temperaturas, alturaTotal);
-            const analise = analisarEstratificacao(posicoes, temperaturas);
+            // Calcular médias ponderadas
+            const tempMedia = Number(calcularMediaPonderada(posicoes, temperaturas, alturaTotal).toFixed(1));
+            const densMediaT = calcularMediaPonderada(posicoes, densidades, alturaTotal);
+            
+            // Corrigir densidade média para 20°C
+            const densMedia20 = Number(corrigirDensidadePara20(densMediaT, tempMedia).toFixed(4));
 
-            // Exibir resultados da análise
+            const analise = analisarEstratificacao(posicoes, temperaturas, densidades);
+
+            // Exibir resultados
             document.getElementById('temp_media_final').textContent = tempMedia.toLocaleString('pt-BR');
+            document.getElementById('dens_media_final').textContent = densMediaT.toLocaleString('pt-BR', {minimumFractionDigits:4});
+            
             const divAnalise = document.getElementById('analise_estratificacao_final');
             divAnalise.innerHTML = '';
             divAnalise.classList.add('hidden');
@@ -751,37 +825,28 @@
                 divAnalise.classList.remove('hidden');
             }
 
-            // CORREÇÃO AQUI: Tratar a troca de ponto/vírgula corretamente
-            const massaInicial = Number(document.getElementById('massa_inicial').textContent.replace(/\./g, '').replace(',', '.')) || 0;
-            const massaRecebida = Number(document.getElementById('massa_embarcacao').textContent.replace(/\./g, '').replace(',', '.')) || 0;
-
-            // Cálculos corrigidos
-            const massaTotal = massaInicial + massaRecebida;
-            const densMedia = massaTotal > 0 && volBrutoFinal > 0 ? Number((massaTotal / (volBrutoFinal * 1000)).toFixed(4)) : 0; // kg/L
-            const fcvFinal = calcularFCV(densMedia, tempMedia);
+            const fcvFinal = calcularFCV(densMedia20, tempMedia);
             const vol20Final = Number((volBrutoFinal * fcvFinal).toFixed(3));
+            
             const volInicial20 = Number(document.getElementById('vol_20_inicial').textContent.replace(/\./g, '').replace(',', '.')) || 0;
             const volRecebido = Number((vol20Final - volInicial20).toFixed(3));
 
-            // Conferência por massa corrigida
-            const massaFinalCalc = Number((vol20Final * densMedia * 1000).toFixed(2)) || 0;
-            const difMassa = Number((massaFinalCalc - massaTotal).toFixed(2)) || 0;
-            const percDif = massaTotal > 0 ? Number(((difMassa / massaTotal) * 100).toFixed(4)) : 0;
+            const massaTotal = Number((vol20Final * densMedia20 * 1000).toFixed(2));
+            const massaInicial = Number(document.getElementById('massa_inicial').textContent.replace(/\./g, '').replace(',', '.')) || 0;
+            const massaRecebidaReal = Number(document.getElementById('massa_embarcacao').textContent.replace(/\./g, '').replace(',', '.')) || 0;
+            const difMassa = Number((massaTotal - (massaInicial + massaRecebidaReal)).toFixed(2));
+            const percDif = (massaInicial + massaRecebidaReal) > 0 ? Number(((difMassa / (massaInicial + massaRecebidaReal)) * 100).toFixed(4)) : 0;
 
-            // Preencher resultados com valores válidos
-            document.getElementById('dens_media').textContent = densMedia.toLocaleString('pt-BR', {minimumFractionDigits:4, maximumFractionDigits:4});
+            document.getElementById('dens_media').textContent = densMedia20.toLocaleString('pt-BR', {minimumFractionDigits:4, maximumFractionDigits:4});
             document.getElementById('fcv_final').textContent = fcvFinal;
             document.getElementById('vol_20_final').textContent = vol20Final.toLocaleString('pt-BR', {minimumFractionDigits:3, maximumFractionDigits:3});
-            document.getElementById('massa_final').textContent = massaFinalCalc.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+            document.getElementById('massa_final').textContent = massaTotal.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
             document.getElementById('vol_recebido').textContent = volRecebido.toLocaleString('pt-BR', {minimumFractionDigits:3, maximumFractionDigits:3});
             document.getElementById('dif_massa').textContent = difMassa.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
             document.getElementById('perc_dif').textContent = percDif.toLocaleString('pt-BR', {minimumFractionDigits:4, maximumFractionDigits:4});
             document.getElementById('resultado_final').classList.remove('hidden');
 
-            // LIBERAR BOTÃO DE CONCLUIR
             document.getElementById('btn_concluir3').disabled = false;
-
-            // Gerar relatório completo
             gerarRelatorio();
         }
 
@@ -792,117 +857,152 @@
             const relatorio = document.getElementById('relatorio_completo');
             const impressao = document.getElementById('conteudo_impressao');
 
-            // Pegar dados de temperaturas iniciais
+            // Pegar dados de temperaturas e densidades iniciais
             const medIni = document.querySelectorAll('#lista_medicoes_inicial .medicao-item');
             let listaIni = '';
             medIni.forEach((item, idx) => {
                 const pos = item.querySelector('.posicao-calculada').textContent;
                 const temp = item.querySelector('.valor-temp').value;
-                listaIni += `<p>Medição ${idx+1}: ${temp}°C | Posição: ${pos}</p>`;
+                const dens = item.querySelector('.valor-dens').value;
+                listaIni += `<tr><td class="border p-1 text-center">${idx+1}</td><td class="border p-1 text-center">${pos}</td><td class="border p-1 text-center">${temp}°C</td><td class="border p-1 text-center">${dens}</td></tr>`;
             });
 
-            // Pegar dados de temperaturas finais
+            // Pegar dados de temperaturas e densidades finais
             const medFin = document.querySelectorAll('#lista_medicoes_final .medicao-item');
             let listaFin = '';
             medFin.forEach((item, idx) => {
                 const pos = item.querySelector('.posicao-calculada').textContent;
                 const temp = item.querySelector('.valor-temp').value;
-                listaFin += `<p>Medição ${idx+1}: ${temp}°C | Posição: ${pos}</p>`;
+                const dens = item.querySelector('.valor-dens').value;
+                listaFin += `<tr><td class="border p-1 text-center">${idx+1}</td><td class="border p-1 text-center">${pos}</td><td class="border p-1 text-center">${temp}°C</td><td class="border p-1 text-center">${dens}</td></tr>`;
             });
 
             const conteudo = `
-                <div class="grid md:grid-cols-2 gap-6">
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <h3 class="font-bold text-primary text-lg mb-3">DADOS GERAIS</h3>
-                        <p><strong>Tanque:</strong> ${document.getElementById('tanque_id').value || 'Não informado'}</p>
+                        <h3 class="font-bold text-primary text-lg mb-3 border-b pb-1">DADOS DE IDENTIFICAÇÃO</h3>
+                        <p><strong>Tanque:</strong> ${document.getElementById('tanque_id_rel').value || 'Não informado'}</p>
+                        <p><strong>Certificado / Lote:</strong> ${document.getElementById('cert_geral').value || 'Não informado'}</p>
                         <p><strong>Embarcação:</strong> ${document.getElementById('embarcacao').value || 'Não informado'}</p>
-                        <p><strong>Número da Carga:</strong> ${document.getElementById('num_carga').value || 'Não informado'}</p>
-                        <p><strong>Certificado Anterior:</strong> ${document.getElementById('cert_anterior').value || 'Não informado'}</p>
-                        <p><strong>Certificado Atual:</strong> ${document.getElementById('cert_atual').value || 'Não informado'}</p>
-                        <p><strong>Data Inicial:</strong> ${document.getElementById('data_inicial').value.replace('T',' ') || 'Não informado'}</p>
-                        <p><strong>Data Final:</strong> ${document.getElementById('data_final').value.replace('T',' ') || 'Não informado'}</p>
+                        <p><strong>Carga/Manifesto:</strong> ${document.getElementById('num_carga').value || 'Não informado'}</p>
+                        <p><strong>Data/Hora Final:</strong> ${document.getElementById('data_final').value.replace('T',' ') || 'Não informado'}</p>
                     </div>
 
                     <div>
-                        <h3 class="font-bold text-primary text-lg mb-3">RESULTADO FINAL</h3>
-                        <div class="p-3 bg-green-50 border border-green-200 rounded">
-                            <p class="text-lg font-bold text-green-800">VOLUME REAL RECEBIDO</p>
-                            <p class="text-2xl font-bold text-green-900">${document.getElementById('vol_recebido').textContent} m³ (a 20°C)</p>
+                        <h3 class="font-bold text-primary text-lg mb-3 border-b pb-1">RESULTADO DA APURAÇÃO</h3>
+                        <div class="p-4 bg-primary/5 border-l-4 border-primary rounded mb-3">
+                            <p class="text-sm uppercase tracking-wider text-primary font-bold">Volume Real Recebido (a 20°C)</p>
+                            <p class="text-3xl font-black text-primary">${document.getElementById('vol_recebido').textContent} m³</p>
                         </div>
-                        <p class="mt-2"><strong>Densidade Média da Mistura:</strong> ${document.getElementById('dens_media').textContent} kg/L</p>
+                        <p><strong>Densidade da Mistura:</strong> ${document.getElementById('dens_media').textContent} kg/L</p>
                         <p><strong>Diferença de Massa:</strong> ${document.getElementById('dif_massa').textContent} kg (${document.getElementById('perc_dif').textContent}%)</p>
                     </div>
                 </div>
 
-                <hr class="my-4 border-gray-300">
-
-                <h3 class="font-bold text-primary text-lg mb-3">ANÁLISE DE ESTRATIFICAÇÃO TÉRMICA</h3>
-                <div class="grid md:grid-cols-2 gap-4 mb-4">
-                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
-                        <h4 class="font-bold mb-2">TANQUE INICIAL</h4>
-                        ${listaIni || '<p>Nenhuma medição registrada</p>'}
-                        <p class="font-medium mt-2">Temperatura média: ${document.getElementById('temp_media_inicial').textContent} °C</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
-                        <h4 class="font-bold mb-2">TANQUE FINAL</h4>
-                        ${listaFin || '<p>Nenhuma medição registrada</p>'}
-                        <p class="font-medium mt-2">Temperatura média: ${document.getElementById('temp_media_final').textContent} °C</p>
+                <div class="mb-6">
+                    <h3 class="font-bold text-primary text-lg mb-3 border-b pb-1">ANÁLISE DE ESTRATIFICAÇÃO (PONTOS DE MEDIÇÃO)</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-sm mb-2 text-gray-700">MEDIÇÕES INICIAIS (TANQUE)</h4>
+                            <table class="w-full text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="border p-1">#</th>
+                                        <th class="border p-1">Profundidade (Trena)</th>
+                                        <th class="border p-1">Temp.</th>
+                                        <th class="border p-1">Dens.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${listaIni}</tbody>
+                            </table>
+                            <p class="mt-2 text-xs font-bold">Média Ponderada: ${document.getElementById('temp_media_inicial').textContent}°C | ${document.getElementById('dens_media_inicial').textContent} kg/L</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm mb-2 text-gray-700">MEDIÇÕES FINAIS (MISTURA)</h4>
+                            <table class="w-full text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="border p-1">#</th>
+                                        <th class="border p-1">Profundidade (Trena)</th>
+                                        <th class="border p-1">Temp.</th>
+                                        <th class="border p-1">Dens.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${listaFin}</tbody>
+                            </table>
+                            <p class="mt-2 text-xs font-bold">Média Ponderada: ${document.getElementById('temp_media_final').textContent}°C | ${document.getElementById('dens_media_final').textContent} kg/L</p>
+                        </div>
                     </div>
                 </div>
 
-                <hr class="my-4 border-gray-300">
+                <div class="mb-6">
+                    <h3 class="font-bold text-primary text-lg mb-3 border-b pb-1">MEMORIAL DE CÁLCULO E METODOLOGIA</h3>
+                    <div class="text-sm text-gray-700 space-y-3">
+                        <p><strong>1. Ponderação por Estratificação:</strong> Para compensar variações térmicas e de densidade ao longo da coluna de produto, foi utilizado o método de <strong>Média Ponderada por Altura</strong>. As medições foram realizadas em profundidades estratégicas (Leituras na Trena), considerando que a medição no topo é realizada a 1 metro abaixo da lâmina do produto, e a medição no fundo a 1 metro acima da mesa de medição (fundo do tanque), garantindo a representatividade do núcleo da carga em conformidade com as boas práticas de inspeção.</p>
+                        
+                        <p><strong>2. Cálculo da Densidade:</strong> A densidade considerada para o cálculo do FCV (Fator de Correção de Volume) é obtida através da média ponderada das densidades medidas em cada ponto, corrigidas para a temperatura padrão de 20°C conforme a norma NBR 14065. Isso evita erros causados pela estratificação do produto no tanque.</p>
+                        
+                        <p><strong>3. Correção de Volume (FCV):</strong> O FCV foi calculado utilizando os coeficientes de expansão térmica (alpha) apropriados para a faixa de densidade do produto, aplicando a fórmula: <em>FCV = 1 / [1 + alpha * (T - 20)]</em>. O volume líquido final é o produto do volume bruto pelo FCV correspondente.</p>
+                        
+                        <p><strong>4. Conferência por Massa:</strong> Como método de segurança, o sistema realiza a conferência por balanço de massa, comparando a massa total final (Volume 20°C x Densidade 20°C) com a soma das massas inicial e recebida da embarcação. Uma variação mínima demonstra a precisão das medições volumétricas.</p>
+                    </div>
+                </div>
 
-                <h3 class="font-bold text-primary text-lg mb-3">DETALHAMENTO DOS CÁLCULOS</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse">
-                                               <thead>
-                            <tr class="bg-gray-100">
-                                <th class="border border-gray-300 p-2 text-left">ITEM</th>
-                                <th class="border border-gray-300 p-2 text-center">VOLUME BRUTO (m³)</th>
-                                <th class="border border-gray-300 p-2 text-center">TEMP MÉDIA (°C)</th>
-                                <th class="border border-gray-300 p-2 text-center">DENSIDADE 20°C (kg/L)</th>
-                                <th class="border border-gray-300 p-2 text-center">FCV</th>
-                                <th class="border border-gray-300 p-2 text-center">VOLUME 20°C (m³)</th>
-                                <th class="border border-gray-300 p-2 text-center">MASSA (kg)</th>
+                <div class="overflow-x-auto mb-6">
+                    <table class="w-full border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-primary text-white">
+                                <th class="border p-2 text-left">ITEM</th>
+                                <th class="border p-2 text-center">VOL. BRUTO (m³)</th>
+                                <th class="border p-2 text-center">TEMP. MÉDIA (°C)</th>
+                                <th class="border p-2 text-center">DENS. 20°C (kg/L)</th>
+                                <th class="border p-2 text-center">FCV</th>
+                                <th class="border p-2 text-center">VOL. 20°C (m³)</th>
+                                <th class="border p-2 text-center">MASSA (kg)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="border border-gray-300 p-2">Tanque Inicial</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('vol_bruto_inicial').value.replace('.', ',')}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('temp_media_inicial').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('dens_inicial_20').value.replace('.', ',')}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('fcv_inicial').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('vol_20_inicial').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('massa_inicial').textContent}</td>
+                                <td class="border p-2 font-bold">Tanque Inicial</td>
+                                <td class="border p-2 text-center">${document.getElementById('vol_bruto_inicial').value.replace('.', ',')}</td>
+                                <td class="border p-2 text-center">${document.getElementById('temp_media_inicial').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('dens_inicial_calc').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('fcv_inicial').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('vol_20_inicial').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('massa_inicial').textContent}</td>
                             </tr>
                             <tr>
-                                <td class="border border-gray-300 p-2">Embarcação</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('vol_bruto_embarcacao').value.replace('.', ',')}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('temp_embarcacao').value.replace('.', ',')}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('dens_embarcacao_20').value.replace('.', ',')}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('fcv_embarcacao').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('vol_20_embarcacao').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('massa_embarcacao').textContent}</td>
+                                <td class="border p-2 font-bold">Embarcação</td>
+                                <td class="border p-2 text-center">${document.getElementById('vol_bruto_embarcacao').value.replace('.', ',')}</td>
+                                <td class="border p-2 text-center">${document.getElementById('temp_embarcacao').value.replace('.', ',')}</td>
+                                <td class="border p-2 text-center">${document.getElementById('dens_embarcacao_20').value.replace('.', ',')}</td>
+                                <td class="border p-2 text-center">${document.getElementById('fcv_embarcacao').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('vol_20_embarcacao').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('massa_embarcacao').textContent}</td>
                             </tr>
                             <tr class="bg-gray-50 font-bold">
-                                <td class="border border-gray-300 p-2">Total Final</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('vol_bruto_final').value.replace('.', ',')}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('temp_media_final').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('dens_media').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('fcv_final').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('vol_20_final').textContent}</td>
-                                <td class="border border-gray-300 p-2 text-center">${document.getElementById('massa_final').textContent}</td>
+                                <td class="border p-2">Total Final</td>
+                                <td class="border p-2 text-center">${document.getElementById('vol_bruto_final').value.replace('.', ',')}</td>
+                                <td class="border p-2 text-center">${document.getElementById('temp_media_final').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('dens_media').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('fcv_final').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('vol_20_final').textContent}</td>
+                                <td class="border p-2 text-center">${document.getElementById('massa_final').textContent}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="mt-6 text-sm text-gray-600">
-                    <p><strong>Base de cálculo:</strong> Temperatura padrão de 20°C, conforme NBR 14065 e regulamentos ANP</p>
-                    <p><strong>Método de medição:</strong> Média ponderada por altura para análise de estratificação térmica</p>
-                    <p><strong>Responsável técnico:</strong> _____________________________________ Matrícula: _______________</p>
-                    <p><strong>Data da emissão do relatório:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                <div class="mt-8 text-xs text-gray-500 border-t pt-4">
+                    <p>Relatório gerado automaticamente em ${new Date().toLocaleString('pt-BR')} | Sistema de Apuração de Volume v2.0</p>
+                    <div class="flex justify-between mt-12">
+                        <div class="text-center w-64">
+                            <div class="border-t border-gray-400 pt-1">Responsável Técnico</div>
+                        </div>
+                        <div class="text-center w-64">
+                            <div class="border-t border-gray-400 pt-1">Fiscalização / Recebimento</div>
+                        </div>
+                    </div>
                 </div>
             `;
 
